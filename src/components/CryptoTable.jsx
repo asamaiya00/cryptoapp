@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import millify from 'millify';
+import TableHeader from './TableHeader';
+import CryptoRow from './CryptoRow';
+
 const CryptoTable = () => {
   const [cryptos, setCryptos] = useState([]);
+  const [limit, setLimit] = useState(20);
+  const [offset, setOffset] = useState('');
 
   useEffect(() => {
     async function fetchCryptos() {
-      const data = await axios.get('https://api.coincap.io/v2/assets');
+      const data = await axios.get(
+        `https://api.coincap.io/v2/assets?limit=${limit}&offset=${offset}`
+      );
       console.log(data.data.data);
       setCryptos(data.data.data);
     }
@@ -14,34 +20,11 @@ const CryptoTable = () => {
   }, []);
   return (
     <div>
-      {/* {JSON.stringify(cryptos)} */}
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Symbol</th>
-            <th>Price (Usd)</th>
-            <th>24H change%</th>
-            <th>Market Cap (USD)</th>
-            <th>24H Volume</th>
-          </tr>
-        </thead>
+      <table className="table">
+        <TableHeader />
         <tbody>
           {cryptos.map((crypto) => (
-            <tr>
-              <td data-label="Rank">{crypto.rank}</td>
-              <td data-label="Name">{crypto.name}</td>
-              <td data-label="Symbol">{crypto.symbol}</td>
-              <td data-label="Price (Usd)">{`$${millify(crypto.priceUsd)}`}</td>
-              <td data-label="24H change%">
-                {Number.parseFloat(crypto.changePercent24Hr).toFixed(2)}
-              </td>
-              <td data-label="Market Cap (USD)">
-                {`$${millify(crypto.marketCapUsd)}`}
-              </td>
-              <td data-label="24H Volume">{millify(crypto.volumeUsd24Hr)}</td>
-            </tr>
+            <CryptoRow crypto={crypto} />
           ))}
         </tbody>
       </table>
