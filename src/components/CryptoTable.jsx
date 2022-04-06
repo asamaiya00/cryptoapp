@@ -21,6 +21,26 @@ const CryptoTable = () => {
     fetchCryptos();
   }, [limit, offset, searchTerm]);
 
+  useEffect(() => {
+    // replace 'ALL' by crypto name for single crypto
+    const pricesWs = new WebSocket('wss://ws.coincap.io/prices?assets=ALL');
+    pricesWs.onmessage = function (msg) {
+      let updatedCoins = JSON.parse(msg.data);
+      let cryptosNames = cryptos.map((crypto) => crypto.id);
+      for (let key in updatedCoins) {
+        if (cryptosNames.find((name) => name === key)) {
+          setCryptos((cryptos) =>
+            cryptos.map((crypto) =>
+              crypto.id === key
+                ? { ...crypto, priceUsd: updatedCoins[key] }
+                : crypto
+            )
+          );
+        }
+      }
+    };
+  }, [cryptos]);
+
   const handlePrev = () => {
     if (offset >= limit) setOffset((offset) => Number(offset) - limit);
     else alert('last page');
@@ -42,7 +62,7 @@ const CryptoTable = () => {
         <TableHeader />
         <tbody>
           {cryptos.map((crypto) => (
-            <CryptoRow crypto={crypto} />
+            <CryptoRow key={crypto.rank} crypto={crypto} />
           ))}
         </tbody>
       </table>
