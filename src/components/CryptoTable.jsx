@@ -58,17 +58,19 @@ const CryptoTable = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <table className="table">
-        <TableHeader />
-        <tbody>
-          {cryptos.map((crypto) => (
-            <CryptoRow key={crypto.rank} crypto={crypto} />
-          ))}
-        </tbody>
-      </table>
-      <div className="btn-container">
-        <button onClick={handlePrev}>Prev</button>
-        <button onClick={handleNext}>Next</button>
+      <div className="main">
+        <table className="table">
+          <TableHeader />
+          <tbody>
+            {cryptos.map((crypto) => (
+              <CryptoRow key={crypto.rank} crypto={crypto} />
+            ))}
+          </tbody>
+        </table>
+        <div className="btn-container">
+          <button onClick={handlePrev}>Prev</button>
+          <button onClick={handleNext}>Next</button>
+        </div>
       </div>
     </div>
   );
